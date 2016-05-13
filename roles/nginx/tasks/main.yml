@@ -7,12 +7,18 @@
 - name: install nginx
   apt: name=nginx state=present update_cache=yes
 
-- name: de-activate nginx default site
-  file: path=/etc/nginx/sites-available/default state=absent
-  notify: restart nginx
-
 - name: configure nginx site
   template: src=nginx.conf.j2 dest=/etc/nginx/sites-available/{{ app_name }} mode=0644
+  notify: restart nginx
+
+- name: get active sites
+  shell: ls -1 /etc/nginx/sites-enabled
+  register: active
+
+- name: de-activate sites
+  file: path=/etc/nginx/sites-enabled/{{ item }} state=absent
+  with_items: '{{active.stdout_lines}}'
+  when: '{{ item != app_name }}'
   notify: restart nginx
 
 - name: activate nginx site
