@@ -12,11 +12,11 @@
   notify: restart nginx
 
 - name: configure nginx site
-  template: src=nginx.conf.j2 dest=/etc/nginx/sites-available/demo mode=0644
+  template: src=nginx.conf.j2 dest=/etc/nginx/sites-available/{{ app_name }} mode=0644
   notify: restart nginx
 
-- name: activate demo nginx site
-  file: src=/etc/nginx/sites-available/demo dest=/etc/nginx/sites-enabled/demo state=link
+- name: activate nginx site
+  file: src=/etc/nginx/sites-available/{{ app_name }} dest=/etc/nginx/sites-enabled/{{ app_name }} state=link
   notify: restart nginx
 
 - name: ensure nginx started
